@@ -1,0 +1,12 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/employee",
+    "getParameters": "?id=123",
+    "body": "{\n\t\"id\": 123\n}"
+  },
+  "response": {
+    "code": 200,
+    "body": "{\n\t\"id\": 123,\n\t\"name\": \"user\"\n}"
+  }
+}
