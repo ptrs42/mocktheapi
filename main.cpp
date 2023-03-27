@@ -5,10 +5,14 @@ using std::cout;
 using std::string;
 using std::endl;
 
+#include <sstream>
+using std::stringstream;
+
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 
 #include <boost/filesystem.hpp>
+#include <boost/filesystem/string_file.hpp>
 namespace fs = boost::filesystem;
 
 #include "RequestResponse.h"
@@ -40,8 +44,8 @@ int main(int argc, char *argv[]) {
 
     // Test code
     RequestResponse rrf{
-            Request{"GET", "/api/employee", "?id=123", R"({ "id": 123 })"},
-            Response{200, "{\n\t\"id\": 123,\n\t\"name\": \"user\"\n}"}};
+            Request{"GET", "/api/employee", "?id=123", "{\n\t\"id\":123\n}"},
+            Response{200, "{\n\t\"id\":123,\n\t\"name\":\"user\"\n}"}};
 
     string jsonStr = Serialize(rrf);
 
@@ -52,7 +56,28 @@ int main(int argc, char *argv[]) {
     if(rrf == rrfParsed){
         cout << "Original and Parsed match" << endl;
     } else {
-        cout << "Original and Parsed match" << endl;
+        cout << "Original and Parsed do not match" << endl;
+    }
+
+    fs::ifstream file(path / "/../testData/GETemployeeId123.json", std::ios::in | std::ios::binary);
+
+    stringstream ss;
+    while (!file.eof()){
+        string s;
+        file >> s;
+        ss << s;
+    }
+
+    string jsonStrFromFile{ss.str()};
+
+    cout << jsonStrFromFile << endl;
+
+    auto rrfParsedFromFile = Parse(jsonStrFromFile);
+
+    if(rrf == rrfParsedFromFile){
+        cout << "Original and Parsed from File match" << endl;
+    } else {
+        cout << "Original and Parsed from File do not match" << endl;
     }
 
     return 0;
